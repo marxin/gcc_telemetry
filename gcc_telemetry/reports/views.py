@@ -13,7 +13,10 @@ def from_utc(utcTime,fmt="%Y-%m-%d %H:%M:%S.%f"):
     return datetime.datetime.strptime(utcTime, fmt)
 
 def index(request):
-    return HttpResponse('List of all reports.')
+    reports = Report.objects.all()
+    s = ','.join([x.test + str(x.creation_date) for x in reports])
+
+    return HttpResponse('List of all reports:' + s)
 
 @csrf_exempt
 def submit(request):

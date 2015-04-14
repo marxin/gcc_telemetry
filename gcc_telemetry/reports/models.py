@@ -6,6 +6,7 @@ class Report(models.Model):
     compiler = models.CharField(max_length = 128)
     options = models.CharField(max_length = 256)
     buildbot = models.CharField(max_length = 128)
+    revision = models.CharField(max_length = 256)
 
 class ReportData(models.Model):
     report = models.ForeignKey(Report)
