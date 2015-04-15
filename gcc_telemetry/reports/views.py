@@ -2,6 +2,7 @@ import json
 import datetime
 
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from .models import * 
 
@@ -12,13 +13,37 @@ def from_utc(utcTime,fmt="%Y-%m-%d %H:%M:%S.%f"):
     # change datetime.datetime to time, return time.struct_time type
     return datetime.datetime.strptime(utcTime, fmt)
 
+def list(request):
+    report_bases = json.dumps([x.serialize() for x in ReportBase.objects.all()], indent = 4)
+    return HttpResponse(report_bases, content_type = 'application/json')
+
 def index(request):
-    reports = Report.objects.all()
-    return HttpResponse(json.dumps([x.serialize() for x in reports], indent = 4), content_type = 'application/json')
+    return render(request, 'reports/index.html')
 
-    s = ','.join([x.test + str(x.creation_date) for x in reports])
+def detail(request, report_base_id):
+    base = ReportBase.objects.filter(id = report_base_id)
+    reports = Report.objects.filter(report_base = base)
 
-    return HttpResponse('List of all reports:' + s)
+    data_dictionary = {}
+
+    for report in reports:
+        for data in report.report_data():
+            if not data.key in data_dictionary:
+                data_dictionary[data.key] = {}
+
+            v = data_dictionary[data.key]
+
+            for plot in data.plot_data():
+                if not plot.name in v:
+                    v[plot.name] = []
+
+                p = v[plot.name]
+                p.append((report.creation_date.isoformat(), plot.value))
+
+    dd = data_dictionary
+    transformed = [{ 'key': x, 'plots': [{ 'key': y, 'values': [{'x': z[0], 'y': z[1]} for z in dd[x][y]] } for y in dd[x]] } for x in dd]
+
+    return HttpResponse(json.dumps(transformed, indent = 4), content_type = 'application/json')
 
 @csrf_exempt
 def submit(request):
@@ -30,12 +55,10 @@ def submit(request):
 
         v = json.loads(d)
 
-        report = Report(creation_date = from_utc(v['creation_date']),
-                test = v['test'],
-                compiler = v['compiler'],
-                options = v['options'],
-                buildbot = v['buildbot'])
+        report_base = ReportBase.get(v['test'], v['compiler'], v['options'], v['buildbot'])
+        report_base.save()
 
+        report = Report(creation_date = from_utc(v['creation_date']), report_base = report_base)
         report.save()
 
         for data in v['data']:

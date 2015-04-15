@@ -1,0 +1,36 @@
+{% load staticfiles %}
+
+<html>
+	<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js"></script>
+	<script src="{% static 'reports/nv.d3.js' %}"></script>	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-debug.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="{% static 'reports/dashboard.js' %}"></script>	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.css"></script>
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+	</head>
+	<body>
+	  <div id="content">
+	    <h1>Dashboard</h1>
+	    <label>Report base</label>
+	    <select data-bind="options: report_bases, optionsText: 'name', optionsValue: 'id', value: selected_report_base "></select>
+	    <label>Report</label>
+	    <select data-bind="options: reports, optionsText: 'key', value: selected_report"></select>
+	    <button data-bind="click: display_data">Dispaly graph</button>
+	    <svg id="chart" style="width: 1600px; height: 600px; margin: 40px;"></svg>
+	    <div data-bind="if: selected_report">
+	      <ul data-bind="foreach: selected_report().plots">
+		<li data-bind="text: key"></li>
+		<ul data-bind="foreach: values">
+		  <li data-bind="text: y"></li>
+		</ul>
+	      </ul>
+	    </div>
+	  </div>
+	</body>
+</html>
