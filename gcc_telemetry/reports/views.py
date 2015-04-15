@@ -14,6 +14,8 @@ def from_utc(utcTime,fmt="%Y-%m-%d %H:%M:%S.%f"):
 
 def index(request):
     reports = Report.objects.all()
+    return HttpResponse(json.dumps([x.serialize() for x in reports], indent = 4), content_type = 'application/json')
+
     s = ','.join([x.test + str(x.creation_date) for x in reports])
 
     return HttpResponse('List of all reports:' + s)
