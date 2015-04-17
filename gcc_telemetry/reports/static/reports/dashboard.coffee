@@ -9,7 +9,7 @@ vm.selected_report = ko.observable(0)
 
 vm.selected_report_base.subscribe (new_value) ->
 	$.ajax
-		url: 'http://localhost:8000/reports/' + new_value
+		url: './' + new_value
 		success: (data) ->
 			vm.reports.removeAll()
 			for item in data
@@ -19,7 +19,7 @@ vm.selected_report_base.subscribe (new_value) ->
 
 vm.get_reports = () ->
 	$.ajax
-		url: 'http://localhost:8000/reports/list'
+		url: './list'
 		success: (data) ->
 			vm.report_bases.removeAll()
 			for item in data
@@ -45,6 +45,8 @@ vm.display_data = () ->
 			for value in plot.values
 				value.x = new Date(value.x)
 
+		$('#chart').remove()
+		$('#chart-container').append('<svg id="chart"></svg>')
 		d3.select('#chart').datum(data).transition().duration(0).call(chart)
 		nv.utils.windowResize(chart.update)
 

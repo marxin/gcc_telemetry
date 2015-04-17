@@ -16,7 +16,7 @@
 
   vm.selected_report_base.subscribe(function(new_value) {
     $.ajax({
-      url: 'http://localhost:8000/reports/' + new_value,
+      url: './' + new_value,
       success: function(data) {
         var i, item, len, results;
         vm.reports.removeAll();
@@ -33,7 +33,7 @@
 
   vm.get_reports = function() {
     $.ajax({
-      url: 'http://localhost:8000/reports/list',
+      url: './list',
       success: function(data) {
         var i, item, len, results;
         vm.report_bases.removeAll();
@@ -69,6 +69,8 @@
           value.x = new Date(value.x);
         }
       }
+      $('#chart').remove();
+      $('#chart-container').append('<svg id="chart"></svg>');
       d3.select('#chart').datum(data).transition().duration(0).call(chart);
       return nv.utils.windowResize(chart.update);
     });
