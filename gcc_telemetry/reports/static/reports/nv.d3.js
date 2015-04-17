@@ -6325,7 +6325,7 @@ nv.models.lineWithFocusChart = function() {
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' at ' + x + ', svn: ' + e.point.note.svn + ', base_md5sum: ' + e.point.note.base_md5sum + '</p>'
+               '<p>' +  y + ' at ' + x + ', revision: ' + e.point.revision + '</p>'
       }
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'brush')

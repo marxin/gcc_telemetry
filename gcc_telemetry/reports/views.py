@@ -38,10 +38,10 @@ def detail(request, report_base_id):
                     v[plot.name] = []
 
                 p = v[plot.name]
-                p.append((report.creation_date.isoformat(), plot.value))
+                p.append((report.creation_date.isoformat(), plot.value, report.revision))
 
     dd = data_dictionary
-    transformed = [{ 'key': x, 'plots': [{ 'key': y, 'values': [{'x': z[0], 'y': z[1]} for z in dd[x][y]] } for y in dd[x]] } for x in dd]
+    transformed = [{ 'key': x, 'plots': [{ 'key': y, 'values': [{'x': z[0], 'y': z[1], 'revision': x[2]} for z in dd[x][y]] } for y in dd[x]] } for x in dd]
 
     return HttpResponse(json.dumps(transformed, indent = 4), content_type = 'application/json')
 
